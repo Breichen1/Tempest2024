@@ -18,6 +18,7 @@ public class IntakeCommand extends Command {
 
 private Intake Intake;
 private double IntakeInput;
+private double KickerInput;
   public IntakeCommand(Intake Intake) {
     this.Intake = Intake;
     addRequirements(Intake);
@@ -37,17 +38,20 @@ private double IntakeInput;
 
                 //standard
                   IntakeInput = 0;
+                  KickerInput = 0;
 
                 break;
             case eject:
 
                 //eject
-                  IntakeInput = -0.8;
+                  IntakeInput = -1;
+                  KickerInput = -0.8;
                 break;
             case shoot:
 
                 //shoot
-                  IntakeInput = 0.8;
+                  IntakeInput = 1;
+                  KickerInput = 0.8;
                 break;
 
 
@@ -55,22 +59,20 @@ private double IntakeInput;
             
                 //hold
                   IntakeInput = 0;
+                  KickerInput = 0;
                 break;
 
             case intake:
 
-                //intake
-                if (Intake.objectSensor()) {
-                  IntakeInput = 1;
-                }
-                else {
-                  IntakeInput = 0;
-                  }
-               //TODO: Add sensor input
+                //TODO; add pickup motors
+                IntakeInput = 1;
+                  KickerInput = 0;
+                
         }
 
 //Intake input
-Intake.runIntake(IntakeInput);
+Intake.runIntake(KickerInput);
+Intake.runPickup(IntakeInput);
 SmartDashboard.putString("intake state", States.intakeState.toString());
 SmartDashboard.putNumber("Intake speed", IntakeInput);
 

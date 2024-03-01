@@ -27,8 +27,6 @@ public class Arm extends SubsystemBase {
  private CANSparkMax armLeft = new CANSparkMax(Constants.articulation.armLeft, MotorType.kBrushless);
  private CANSparkMax armRight = new CANSparkMax(Constants.articulation.armRight, MotorType.kBrushless);
 
- public DigitalInput limitSwitch = new DigitalInput(Constants.articulation.limitSwitch);
-
  public double setpoint = 0;
  
  public double armRatio = Constants.articulation.ChainRatio * Constants.articulation.gearRatio;
@@ -44,8 +42,8 @@ public class Arm extends SubsystemBase {
    armRight.restoreFactoryDefaults();
 
    //Arm configuration
-   armRight.setInverted(true);
-   armLeft.setInverted(false);
+   armRight.setInverted(false);
+   armLeft.setInverted(true);
 
    armRight.setSmartCurrentLimit(40);
    armLeft.setSmartCurrentLimit(40);
@@ -68,11 +66,11 @@ public class Arm extends SubsystemBase {
    armRight.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, Constants.articulation.revLimit);
 
    leftEncoder = armLeft.getEncoder();
-   leftEncoder.setPositionConversionFactor(.7);
+   leftEncoder.setPositionConversionFactor(1.575);
    leftEncoder.setPosition(0);
 
    rightEncoder = armRight.getEncoder();
-   rightEncoder.setPositionConversionFactor(.7);
+   rightEncoder.setPositionConversionFactor(1.575);
    rightEncoder.setPosition(0);
 
    armLeft.burnFlash();
@@ -91,25 +89,10 @@ public class Arm extends SubsystemBase {
   }
 
   public void adjustSetpoint(double delta) {
-    if (getLeftAngle() > Constants.articulation.fwdLimit) {
-   if (delta > 0) {
-    delta= 0;
-    setpoint = Constants.articulation.fwdLimit;
-   }
-
-    } else{
-      if (getLeftAngle() < Constants.articulation.revLimit) {
-        if (delta < 0) {
-    delta = 0;
-    setpoint = Constants.articulation.revLimit;
-   } else {
-    delta = delta;
-   }
-      } 
-       
-    }
-    setpoint += delta;
+     setpoint += delta;
   }
+   
+  
 
   //live adjustment
   public void RunLeftArm(double input){

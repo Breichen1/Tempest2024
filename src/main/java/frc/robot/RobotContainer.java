@@ -1,8 +1,5 @@
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -16,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.*;
+import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Articulation.Arm;
 import frc.robot.subsystems.Articulation.Intake;
 import frc.robot.subsystems.Articulation.Shooter;
@@ -37,7 +35,7 @@ public class RobotContainer {
     private final int translationAxis = 1;
     private final int strafeAxis = 0;
     private final int rotationAxis = 2;
-    private final int speedDial = 5;
+    private final int speedDial = 3;
 
     //operator controls
     private final int armAxis = 1;
@@ -58,11 +56,6 @@ public class RobotContainer {
     private JoystickButton intake = new JoystickButton(operator, 7);
     private JoystickButton eject = new JoystickButton(operator, 9);
 
-    /* Driver Buttons */
-    private final JoystickButton zeroGyro = new JoystickButton(driver, 7);
-
-    private final JoystickButton dampen = new JoystickButton(driver, 18);
-
     private final POVButton up = new POVButton(driver, 90);
     private final POVButton down = new POVButton(driver, 270);
     private final POVButton right = new POVButton(driver, 180);
@@ -72,15 +65,24 @@ public class RobotContainer {
     private final Arm s_arm = new Arm();
     private final Intake s_intake = new Intake();
     private final Shooter s_shooter = new Shooter();
+    private final DriveTrain s_drivetrain = new DriveTrain();
   
 
-    /* AutoChooser */
-    private final SendableChooser<Command> autoChooser;
+  
 
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         //mecanum command
+        s_drivetrain.setDefaultCommand(
+            new DriveCommand(
+                s_drivetrain,
+               () -> -driver.getRawAxis(translationAxis), 
+                () -> -driver.getRawAxis(strafeAxis), 
+                () -> driver.getRawAxis(rotationAxis), 
+                () -> -driver.getRawAxis(speedDial) 
+            )
+        );
 
 
         //Swerve Command
@@ -122,31 +124,10 @@ public class RobotContainer {
         // Configure the button bindings
         configureButtonBindings();
 
-        //Pathplanner commands - templates
-        NamedCommands.registerCommand("Shooter Position", new ParallelCommandGroup(
-                new InstantCommand(() -> States.shooterState = States.ShooterStates.shoot),
-                new InstantCommand(() -> States.armState = States.ArmStates.speakerShot)
-            ));
-
-        NamedCommands.registerCommand("Pickup Position", new ParallelCommandGroup(
-                new InstantCommand(() -> States.intakeState = States.IntakeStates.intake),
-                new InstantCommand(() -> States.armState = States.ArmStates.low)
-            ));
-
-        NamedCommands.registerCommand("EjectOn", new InstantCommand(() -> States.intakeState = States.IntakeStates.shoot));
-
-        NamedCommands.registerCommand("EjectOff", new InstantCommand(() -> States.intakeState = States.IntakeStates.standard));
-
-        NamedCommands.registerCommand("Position Reset",  new ParallelCommandGroup(
-                new InstantCommand(() -> States.shooterState = States.ShooterStates.standard),
-                new InstantCommand(() -> States.armState = States.ArmStates.medium),
-                new InstantCommand(() -> States.intakeState = States.IntakeStates.standard)
-            ));
+        
     
         
-        //Auto chooser
-        autoChooser = AutoBuilder.buildAutoChooser("New Auto"); // Default auto will be `Commands.none()`
-        SmartDashboard.putData("Auto Mode", autoChooser);
+        
     }
 
     /**
@@ -244,7 +225,4 @@ public class RobotContainer {
      *
      * @return the command to run in autonomous
      */
-    public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
-    }
 }

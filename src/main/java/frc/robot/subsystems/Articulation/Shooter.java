@@ -43,7 +43,7 @@ public class Shooter extends SubsystemBase {
 
    //shoot Command
    public void runShooter(double power) {
-    topShooter.set(power);
+    topShooter.set(-power);
     bottomShooter.set(power);
   }
 

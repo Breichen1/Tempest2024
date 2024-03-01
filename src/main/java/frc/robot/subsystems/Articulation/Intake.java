@@ -12,6 +12,7 @@ import java.util.function.DoubleSupplier;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -19,7 +20,9 @@ import frc.robot.Constants;
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
  private CANSparkMax Intake = new CANSparkMax(Constants.articulation.intake, MotorType.kBrushless);
- public DigitalInput sensor = new DigitalInput(Constants.articulation.sensor);
+
+ private Talon pickup1 = new Talon(Constants.articulation.pickup1);
+ private Talon pickup2 = new Talon(Constants.articulation.pickup2);
 
   public Intake() {
     //motor configuration
@@ -35,6 +38,11 @@ public class Intake extends SubsystemBase {
     Intake.set(power);
   }
 
+  public void runPickup(double power) {
+    pickup1.set(-power);
+    pickup2.set(-power);
+  }
+
   public double getTemp() {
    return Intake.getMotorTemperature();
   }
@@ -43,14 +51,10 @@ public class Intake extends SubsystemBase {
     return Intake.getAppliedOutput();
   }
 
-   public boolean objectSensor() {
-    return sensor.get();
-  } 
-
+   
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Intake motor temperature", getTemp());
-    SmartDashboard.putBoolean("object sensor", objectSensor());
   }
 }

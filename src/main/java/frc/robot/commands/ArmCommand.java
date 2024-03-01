@@ -57,12 +57,12 @@ switch(States.armState){
             case low:
 
                 //low ground
-                  Arm.setAngle(-2.5);
+                  Arm.setAngle(-4.5);
                 break;
             case medium:
 
                 //medium source transit
-                   Arm.setAngle(60);
+                   Arm.setAngle(70);
                 break;
             case high:
 
