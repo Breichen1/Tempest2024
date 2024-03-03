@@ -67,12 +67,12 @@ switch(States.armState){
             case high:
 
                 //high amp
-                  Arm.setAngle(90);
+                  Arm.setAngle(100);
                 break;
             case speakerShot:
 
                 //Speaker shoot
-                  Arm.setAngle(21.5);
+                  Arm.setAngle(18);
                 break;
             case podiumShot:
 
